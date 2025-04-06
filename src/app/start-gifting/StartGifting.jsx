@@ -6,7 +6,6 @@ import {
   Card, 
   CardContent, 
   CardDescription, 
-  CardFooter, 
   CardHeader, 
   CardTitle 
 } from "@/components/ui/card";
@@ -16,19 +15,11 @@ import {
   GiftIcon, 
   HomeIcon,
   RefreshCwIcon,
-  ThumbsUpIcon,
-  ThumbsDownIcon,
-  ShoppingCartIcon,
-  HeartIcon,
-  StarIcon,
-  ArrowRightIcon,
   SettingsIcon,
   CheckIcon,
   FilterIcon
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
 import { 
   Select, 
   SelectContent, 
@@ -36,11 +27,9 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
   DialogContent,
@@ -276,25 +265,8 @@ export default function StartGiftingPage() {
   
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <GiftIcon className="h-8 w-8 text-purple-600" />
-            <h1 className="text-2xl font-bold text-gray-900">GiftWise</h1>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="icon" asChild>
-              <Link href="/dashboard">
-                <HomeIcon className="h-5 w-5" />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </header>
-
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex flex-col md:flex-row gap-8">
           {/* Left Column - Selection Panel */}
           <div className="w-full md:w-1/3">
@@ -655,7 +627,7 @@ export default function StartGiftingPage() {
             )}
           </div>
         </div>
-      </main>
+      </div>
       
       {/* Person Preferences Modal */}
       {selectedPerson && (

@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import AddEditPersonModal from "@/components/custom/Modals/PersonModal";
 import ProfileSetupModal from "@/components/custom/Modals/ProfileSetup";
 import PersonPreferencesModal from "@/components/custom/Modals/Preferences";
@@ -20,9 +26,9 @@ export default function ModalsTestPage() {
     interests: ["Reading", "Technology", "Travel"],
     favoriteColors: ["Blue", "Green"],
     giftPreferences: ["Electronics", "Books"],
-    bio: "I love finding the perfect gifts for my friends and family."
+    bio: "I love finding the perfect gifts for my friends and family.",
   });
-  
+
   const [samplePerson, setSamplePerson] = useState({
     id: 101,
     name: "Sarah Johnson",
@@ -32,37 +38,42 @@ export default function ModalsTestPage() {
     birthday: new Date("1992-11-15"),
     anniversary: null,
     notes: "Always appreciates thoughtful gifts.",
-    avatar: "/avatars/sarah.png"
+    avatar: "/avatars/sarah.png",
   });
-  
+
   const [samplePreferences, setSamplePreferences] = useState({
     interests: ["Reading", "Cooking", "Travel"],
     favoriteColors: ["Purple", "Teal"],
     clothingSizes: {
       shirt: "M",
       pants: "8",
-      shoes: "7.5"
+      shoes: "7.5",
     },
     giftCategories: ["Books", "Home Decor", "Experiences"],
     priceRange: {
       min: 30,
-      max: 150
+      max: 150,
     },
     dislikes: ["Loud toys", "Scented candles"],
     wishlistItems: [
-      { id: 1, name: "Kindle Paperwhite", url: "https://amazon.com/kindle", price: "139.99" },
-      { id: 2, name: "Cooking Class", url: "", price: "75" }
+      {
+        id: 1,
+        name: "Kindle Paperwhite",
+        url: "https://amazon.com/kindle",
+        price: "139.99",
+      },
+      { id: 2, name: "Cooking Class", url: "", price: "75" },
     ],
-    notes: "Prefers experiences over physical items when possible."
+    notes: "Prefers experiences over physical items when possible.",
   });
-  
+
   // Modal states
   const [addEditPersonModalOpen, setAddEditPersonModalOpen] = useState(false);
   const [profileSetupModalOpen, setProfileSetupModalOpen] = useState(false);
   const [preferencesModalOpen, setPreferencesModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  
+
   // Modal handlers
   const handleSavePerson = (personData) => {
     console.log("Person saved:", personData);
@@ -72,19 +83,19 @@ export default function ModalsTestPage() {
     }
     setAddEditPersonModalOpen(false);
   };
-  
+
   const handleSaveProfile = (profileData) => {
     console.log("Profile saved:", profileData);
     setCurrentUser(profileData);
     setProfileSetupModalOpen(false);
   };
-  
+
   const handleSavePreferences = (preferencesData) => {
     console.log("Preferences saved:", preferencesData);
     setSamplePreferences(preferencesData);
     setPreferencesModalOpen(false);
   };
-  
+
   const handleDeletePerson = (personId) => {
     console.log("Person deleted:", personId);
     // In a real app, you would remove the person from your state or database
@@ -92,7 +103,7 @@ export default function ModalsTestPage() {
   };
 
   const [userDetailsOpen, setUserDetailsOpen] = useState(false);
-  
+
   // Sample user data - in a real app, this would come from your API or state management
   const [userData, setUserData] = useState({
     id: 1,
@@ -103,34 +114,41 @@ export default function ModalsTestPage() {
     avatarUrl: "/avatars/john.png",
     interests: ["Reading", "Technology", "Travel", "Photography"],
     favoriteColors: ["Blue", "Green", "Black"],
-    giftPreferences: ["Electronics", "Books", "Experiences", "Subscription Boxes"],
-    bio: "I'm a tech enthusiast who loves finding the perfect gifts for friends and family. When I'm not browsing the latest gadgets, you can find me reading or planning my next adventure."
+    giftPreferences: [
+      "Electronics",
+      "Books",
+      "Experiences",
+      "Subscription Boxes",
+    ],
+    bio: "I'm a tech enthusiast who loves finding the perfect gifts for friends and family. When I'm not browsing the latest gadgets, you can find me reading or planning my next adventure.",
   });
-  
+
   // This function would be called when the profile is updated
   const handleProfileUpdate = (updatedData) => {
     setUserData(updatedData);
     // You might want to save this to your backend as well
   };
-  
+
   return (
     <div className="container mx-auto py-10 space-y-8">
       <h1 className="text-3xl font-bold">Modal Components Test Page</h1>
       <p className="text-gray-600">
-        This page demonstrates how to use the modal components for the GiftWise application.
+        This page demonstrates how to use the modal components for the GiftWise
+        application.
       </p>
-      
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Add/Edit Person Modal Card */}
         <Card>
           <CardHeader>
             <CardTitle>Add/Edit Person Modal</CardTitle>
             <CardDescription>
-              Use this modal to add a new person or edit an existing person's details.
+              Use this modal to add a new person or edit an existing person's
+              details.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button 
+            <Button
               onClick={() => {
                 setIsEditMode(false);
                 setAddEditPersonModalOpen(true);
@@ -138,7 +156,7 @@ export default function ModalsTestPage() {
             >
               Add New Person
             </Button>
-            <Button 
+            <Button
               variant="outline"
               onClick={() => {
                 setIsEditMode(true);
@@ -147,7 +165,7 @@ export default function ModalsTestPage() {
             >
               Edit Existing Person
             </Button>
-            
+
             {/* The Modal */}
             <AddEditPersonModal
               isOpen={addEditPersonModalOpen}
@@ -157,7 +175,7 @@ export default function ModalsTestPage() {
             />
           </CardContent>
         </Card>
-        
+
         {/* Profile Setup Modal Card */}
         <Card>
           <CardHeader>
@@ -167,14 +185,14 @@ export default function ModalsTestPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button 
+            <Button
               onClick={() => {
                 setProfileSetupModalOpen(true);
               }}
             >
               Edit Your Profile
             </Button>
-            <Button 
+            <Button
               variant="outline"
               onClick={() => {
                 setCurrentUser(null); // Reset to simulate new user
@@ -183,7 +201,7 @@ export default function ModalsTestPage() {
             >
               Simulate First-Time Setup
             </Button>
-            
+
             {/* The Modal */}
             <ProfileSetupModal
               isOpen={profileSetupModalOpen}
@@ -194,7 +212,7 @@ export default function ModalsTestPage() {
             />
           </CardContent>
         </Card>
-        
+
         {/* Person Preferences Modal Card */}
         <Card>
           <CardHeader>
@@ -204,14 +222,14 @@ export default function ModalsTestPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button 
+            <Button
               onClick={() => {
                 setPreferencesModalOpen(true);
               }}
             >
               Edit Person Preferences
             </Button>
-            <Button 
+            <Button
               variant="outline"
               onClick={() => {
                 setSamplePreferences(null); // Reset to simulate new preferences
@@ -220,7 +238,7 @@ export default function ModalsTestPage() {
             >
               Add New Preferences
             </Button>
-            
+
             {/* The Modal */}
             <PersonPreferencesModal
               isOpen={preferencesModalOpen}
@@ -231,7 +249,7 @@ export default function ModalsTestPage() {
             />
           </CardContent>
         </Card>
-        
+
         {/* Delete Person Modal Card */}
         <Card>
           <CardHeader>
@@ -241,7 +259,7 @@ export default function ModalsTestPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button 
+            <Button
               variant="destructive"
               onClick={() => {
                 setDeleteModalOpen(true);
@@ -249,7 +267,7 @@ export default function ModalsTestPage() {
             >
               Delete Person
             </Button>
-            
+
             {/* The Modal */}
             <DeletePersonModal
               isOpen={deleteModalOpen}
@@ -260,7 +278,7 @@ export default function ModalsTestPage() {
           </CardContent>
         </Card>
       </div>
-      
+
       {/* Current State Display */}
       <Card className="mt-8">
         <CardHeader>
@@ -294,28 +312,27 @@ export default function ModalsTestPage() {
       </Card>
 
       <div className="container mx-auto py-10">
-<Card>
-  <CardHeader>
-    <CardTitle>Your Profile</CardTitle>
-    <CardDescription>
-      View and manage your personal information and preferences
-    </CardDescription>
-  </CardHeader>
-  <CardContent className="flex justify-center">
-    <Button onClick={() => setUserDetailsOpen(true)}>
-      View Profile Details
-    </Button>
-  </CardContent>
-</Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>Your Profile</CardTitle>
+            <CardDescription>
+              View and manage your personal information and preferences
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex justify-center">
+            <Button onClick={() => setUserDetailsOpen(true)}>
+              View Profile Details
+            </Button>
+          </CardContent>
+        </Card>
 
-{/* User Details Modal */}
-<UserDetailsModal
-  isOpen={userDetailsOpen}
-  onClose={() => setUserDetailsOpen(false)}
-  userData={userData}
-/>
-</div>
+        {/* User Details Modal */}
+        <UserDetailsModal
+          isOpen={userDetailsOpen}
+          onClose={() => setUserDetailsOpen(false)}
+          userData={userData}
+        />
+      </div>
     </div>
-
   );
 }
