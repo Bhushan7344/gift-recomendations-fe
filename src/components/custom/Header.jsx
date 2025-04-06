@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-
 import { GiftIcon } from "lucide-react";
 import { Avatar, AvatarImage, AvatarFallback } from "../ui/avatar";
 import UserDetailsModal from "./Modals/UserDetails";
@@ -8,24 +7,7 @@ import { useState } from "react";
 
 const Header = () => {
   const [userDetailsOpen, setUserDetailsOpen] = useState(false);
-
-  const [userData, setUserData] = useState({
-    id: 1,
-    fullName: "John Doe",
-    email: "john.doe@example.com",
-    gender: "male",
-    birthday: new Date("1990-05-15"),
-    avatarUrl: "/avatars/john.png",
-    interests: ["Reading", "Technology", "Travel", "Photography"],
-    favoriteColors: ["Blue", "Green", "Black"],
-    giftPreferences: [
-      "Electronics",
-      "Books",
-      "Experiences",
-      "Subscription Boxes",
-    ],
-    bio: "I'm a tech enthusiast who loves finding the perfect gifts for friends and family. When I'm not browsing the latest gadgets, you can find me reading or planning my next adventure.",
-  });
+  
   return (
     <header className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
@@ -48,7 +30,6 @@ const Header = () => {
       <UserDetailsModal
         isOpen={userDetailsOpen}
         onClose={() => setUserDetailsOpen(false)}
-        userData={userData}
       />
     </header>
   );

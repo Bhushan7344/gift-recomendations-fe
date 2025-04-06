@@ -1,115 +1,131 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { format } from "date-fns";
 import { CalendarIcon, UserIcon, UploadIcon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 
-export default function ProfileSetupModal({ 
-  isOpen, 
-  onClose, 
-  onSave, 
+export default function ProfileSetupModal({
+  isOpen,
+  onClose,
+  onSave,
   userData = null, // User data if editing existing profile
-  isFirstTimeSetup = false // Whether this is the first time setup
+  isFirstTimeSetup = false, // Whether this is the first time setup
 }) {
   const [formData, setFormData] = useState({
-    fullName: "",
+    full_name: "",
     email: "",
     gender: "",
     birthday: undefined,
     interests: [],
-    favoriteColors: [],
-    giftPreferences: [],
+    gift_preferences: [],
     bio: "",
-    avatarUrl: ""
+    avatar_url: "",
   });
 
   const interests = [
-    "Reading", "Cooking", "Sports", "Music", "Art", "Technology", 
-    "Travel", "Fashion", "Gaming", "Fitness", "Movies", "Gardening"
+    "Reading",
+    "Cooking",
+    "Sports",
+    "Music",
+    "Art",
+    "Technology",
+    "Travel",
+    "Fashion",
+    "Gaming",
+    "Fitness",
+    "Movies",
+    "Gardening",
   ];
 
   const giftCategories = [
-    "Electronics", "Books", "Clothing", "Home Decor", "Experiences", 
-    "Food & Drink", "Beauty & Wellness", "Sports & Outdoors", "Handmade"
-  ];
-
-  const colors = [
-    "Red", "Blue", "Green", "Purple", "Yellow", "Pink", 
-    "Black", "White", "Orange", "Brown", "Gray", "Teal"
+    "Electronics",
+    "Books",
+    "Clothing",
+    "Home Decor",
+    "Experiences",
+    "Food & Drink",
+    "Beauty & Wellness",
+    "Sports & Outdoors",
+    "Handmade",
   ];
 
   // Initialize form with user data if available
   useEffect(() => {
     if (userData) {
       setFormData({
-        fullName: userData.fullName || "",
+        full_name: userData.full_name || "",
         email: userData.email || "",
         gender: userData.gender || "",
         birthday: userData.birthday ? new Date(userData.birthday) : undefined,
         interests: userData.interests || [],
-        favoriteColors: userData.favoriteColors || [],
-        giftPreferences: userData.giftPreferences || [],
+        gift_preferences: userData.gift_preferences || [],
         bio: userData.bio || "",
-        avatarUrl: userData.avatarUrl || ""
+        avatar_url: userData.avatar_url || "",
       });
     } else {
       // Reset form for new setup
       setFormData({
-        fullName: "",
+        full_name: "",
         email: "",
         gender: "",
         birthday: undefined,
         interests: [],
-        favoriteColors: [],
-        giftPreferences: [],
+        gift_preferences: [],
         bio: "",
-        avatarUrl: ""
+        avatar_url: "",
       });
     }
   }, [userData, isOpen]);
 
   const handleChange = (field, value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
   };
 
   const handleArrayToggle = (field, value) => {
-    setFormData(prev => {
+    setFormData((prev) => {
       const currentArray = [...prev[field]];
       const index = currentArray.indexOf(value);
-      
+
       if (index === -1) {
         // Add the value
         return { ...prev, [field]: [...currentArray, value] };
       } else {
         // Remove the value
-        return { ...prev, [field]: currentArray.filter(item => item !== value) };
+        return {
+          ...prev,
+          [field]: currentArray.filter((item) => item !== value),
+        };
       }
     });
   };
@@ -118,7 +134,7 @@ export default function ProfileSetupModal({
     e.preventDefault();
     onSave({
       ...formData,
-      id: userData?.id || Date.now() // Use existing ID or generate new one
+      id: userData?.id || Date.now(), // Use existing ID or generate new one
     });
   };
 
@@ -131,17 +147,17 @@ export default function ProfileSetupModal({
               {isFirstTimeSetup ? "Welcome to GiftWise!" : "Edit Your Profile"}
             </DialogTitle>
             <DialogDescription>
-              {isFirstTimeSetup 
-                ? "Let's set up your profile to help us find perfect gifts for your loved ones." 
+              {isFirstTimeSetup
+                ? "Let's set up your profile to help us find perfect gifts for your loved ones."
                 : "Update your profile information to improve gift recommendations."}
             </DialogDescription>
           </DialogHeader>
-          
+
           <div className="grid gap-6 py-4">
             {/* Avatar Upload */}
             <div className="flex flex-col items-center gap-4">
               <Avatar className="h-24 w-24">
-                <AvatarImage src={formData.avatarUrl} alt={formData.fullName} />
+                <AvatarImage src={formData.avatar_url} alt={formData.full_name} />
                 <AvatarFallback>
                   <UserIcon className="h-12 w-12 text-gray-400" />
                 </AvatarFallback>
@@ -151,24 +167,24 @@ export default function ProfileSetupModal({
                 Upload Photo
               </Button>
             </div>
-            
+
             {/* Basic Information */}
             <div>
               <h3 className="text-lg font-medium mb-4">Basic Information</h3>
               <div className="grid gap-4">
                 <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="fullName" className="text-right">
+                  <Label htmlFor="full_name" className="text-right">
                     Full Name
                   </Label>
                   <Input
-                    id="fullName"
-                    value={formData.fullName}
-                    onChange={(e) => handleChange("fullName", e.target.value)}
+                    id="full_name"
+                    value={formData.full_name}
+                    onChange={(e) => handleChange("full_name", e.target.value)}
                     className="col-span-3"
                     required
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="email" className="text-right">
                     Email
@@ -182,7 +198,7 @@ export default function ProfileSetupModal({
                     required
                   />
                 </div>
-                
+
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="gender" className="text-right">
                     Gender
@@ -194,20 +210,20 @@ export default function ProfileSetupModal({
                     className="col-span-3 flex space-x-4"
                   >
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="male" id="male" />
+                      <RadioGroupItem value="Male" id="male" />
                       <Label htmlFor="male">Male</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="female" id="female" />
+                      <RadioGroupItem value="Female" id="female" />
                       <Label htmlFor="female">Female</Label>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="other" id="other" />
+                      <RadioGroupItem value="Other" id="other" />
                       <Label htmlFor="other">Other</Label>
                     </div>
                   </RadioGroup>
                 </div>
-                
+
                 <div className="grid grid-cols-4 items-center gap-4">
                   <Label htmlFor="birthday" className="text-right">
                     Birthday
@@ -244,18 +260,19 @@ export default function ProfileSetupModal({
                 </div>
               </div>
             </div>
-            
+
             {/* Interests */}
             <div>
               <h3 className="text-lg font-medium mb-4">Interests</h3>
               <p className="text-sm text-gray-500 mb-4">
-                Select interests that describe you (helps us recommend gifts you'd like to give)
+                Select interests that describe you (helps us recommend gifts
+                you'd like to give)
               </p>
               <div className="grid grid-cols-3 gap-2">
-                {interests.map(interest => (
+                {interests.map((interest) => (
                   <div key={interest} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`interest-${interest}`} 
+                    <Checkbox
+                      id={`interest-${interest}`}
                       checked={formData.interests.includes(interest)}
                       onCheckedChange={(checked) => {
                         if (checked) {
@@ -270,7 +287,7 @@ export default function ProfileSetupModal({
                 ))}
               </div>
             </div>
-            
+
             {/* Gift Preferences */}
             <div>
               <h3 className="text-lg font-medium mb-4">Gift Preferences</h3>
@@ -278,16 +295,16 @@ export default function ProfileSetupModal({
                 What types of gifts do you prefer to give to others?
               </p>
               <div className="grid grid-cols-3 gap-2">
-                {giftCategories.map(category => (
+                {giftCategories.map((category) => (
                   <div key={category} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`gift-${category}`} 
-                      checked={formData.giftPreferences.includes(category)}
+                    <Checkbox
+                      id={`gift-${category}`}
+                      checked={formData.gift_preferences.includes(category)}
                       onCheckedChange={(checked) => {
                         if (checked) {
-                          handleArrayToggle("giftPreferences", category);
+                          handleArrayToggle("gift_preferences", category);
                         } else {
-                          handleArrayToggle("giftPreferences", category);
+                          handleArrayToggle("gift_preferences", category);
                         }
                       }}
                     />
@@ -296,30 +313,7 @@ export default function ProfileSetupModal({
                 ))}
               </div>
             </div>
-            
-            {/* Favorite Colors */}
-            <div>
-              <h3 className="text-lg font-medium mb-4">Favorite Colors</h3>
-              <div className="grid grid-cols-4 gap-2">
-                {colors.map(color => (
-                  <div key={color} className="flex items-center space-x-2">
-                    <Checkbox 
-                      id={`color-${color}`} 
-                      checked={formData.favoriteColors.includes(color)}
-                      onCheckedChange={(checked) => {
-                        if (checked) {
-                          handleArrayToggle("favoriteColors", color);
-                        } else {
-                          handleArrayToggle("favoriteColors", color);
-                        }
-                      }}
-                    />
-                    <Label htmlFor={`color-${color}`}>{color}</Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
+
             {/* Bio */}
             <div className="grid grid-cols-4 items-start gap-4">
               <Label htmlFor="bio" className="text-right pt-2">
@@ -335,7 +329,7 @@ export default function ProfileSetupModal({
               />
             </div>
           </div>
-          
+
           <DialogFooter>
             {!isFirstTimeSetup && (
               <Button type="button" variant="outline" onClick={onClose}>

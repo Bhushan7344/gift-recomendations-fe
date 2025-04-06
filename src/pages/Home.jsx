@@ -24,13 +24,29 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import AddEditPersonModal from "@/components/custom/Modals/PersonModal";
 import Link from "next/link";
+import { addPerson } from "@/lib/api/relationship";
 
 const HomePage = () => {
   const [addEditPersonModalOpen, setAddEditPersonModalOpen] = useState(false);
 
-  const handleSavePerson = (personData) => {
+  const [loading, setLoading] = useState(false);
+  const [personData, setPersonData] = useState({});
+
+  const handleSavePerson = async (personData) => {
     console.log("Person saved:", personData);
-    setAddEditPersonModalOpen(false);
+    try {
+      setLoading(true);
+      const response = await addPerson(
+        "65929f49-6e5b-4f9a-a059-b028d7feca92",
+        personData
+      );
+      setPersonData(response.data);
+    } catch (error) {
+      console.error("Failed to fetch posts:", error);
+    } finally {
+      setLoading(false);
+      setAddEditPersonModalOpen(false);
+    }
   };
 
   const [upcomingEvents, setUpcomingEvents] = useState([
@@ -254,9 +270,9 @@ const HomePage = () => {
             </CardContent>
             <CardFooter className="border-t pt-4 flex justify-end">
               <Link href="person">
-              <Button variant="ghost" size="sm" className="cursor-pointer">
-                Manage All People
-              </Button>
+                <Button variant="ghost" size="sm" className="cursor-pointer">
+                  Manage All People
+                </Button>
               </Link>
             </CardFooter>
           </Card>
