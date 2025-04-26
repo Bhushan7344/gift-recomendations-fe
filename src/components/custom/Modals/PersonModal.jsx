@@ -52,9 +52,15 @@ export default function AddEditPersonModal({
   // Initialize form with person data if in edit mode
   useEffect(() => {
     if (isEditMode && person) {
+      const allowedTypes = ["Friend", "Family", "Partner", "Colleague"];
+
+      const relationship = allowedTypes.includes(person.relationship_type)
+        ? person.relationship_type
+        : "Other";
+
       setFormData({
         name: person.name || "",
-        relationship_type: person.relationship_type || "",
+        relationship_type: relationship,
         email: person.email || "",
         phone_number: person.phone_number || "",
         notes: person.notes || "",
@@ -62,6 +68,7 @@ export default function AddEditPersonModal({
         anniversary: person.anniversary
           ? new Date(person.anniversary)
           : undefined,
+        avatar: person.avatar || "",
       });
     } else {
       // Reset form for add mode
@@ -73,6 +80,7 @@ export default function AddEditPersonModal({
         notes: "",
         birthdate: undefined,
         anniversary: undefined,
+        avatar: "",
       });
     }
   }, [person, isEditMode, isOpen]);
@@ -137,7 +145,7 @@ export default function AddEditPersonModal({
 
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="relationship_type" className="text-right">
-                relationship_type
+                Relationship
               </Label>
               <Select
                 value={formData.relationship_type}
@@ -173,7 +181,7 @@ export default function AddEditPersonModal({
 
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="phone_number" className="text-right">
-                phone_number
+                Phone Number
               </Label>
               <Input
                 id="phone_number"

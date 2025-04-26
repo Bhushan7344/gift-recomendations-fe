@@ -8,19 +8,23 @@ export async function getUserById(id: string) {
 
     return response.data;
   } catch (error: any) {
-    console.error(`Error fetching user ${id}:`, error?.response?.data || error.message);
-    throw new Error('Failed to fetch user');
+    console.error(
+      `Error fetching user ${id}:`,
+      error?.response?.data || error.message
+    );
   }
 }
 
 export async function updateUserPreferences(id: string, updatedUserData: any) {
-    try {
-        const payload = updatedUserData;
-      const response = await axios.patch(`${API_BASE_URL}/users/${id}`, payload);
-  
-      return response.data;
-    } catch (error: any) {
-      console.error(`Error fetching user ${id}:`, error?.response?.data || error.message);
-      throw new Error('Failed to fetch user');
-    }
+  try {
+    const payload = updatedUserData;
+    const response = await axios.patch(`${API_BASE_URL}/users/${id}`, payload);
+
+    return response.data;
+  } catch (error: any) {
+    console.error(
+      `Error fetching user ${id}:`,
+      error?.response?.data || error.message
+    );
   }
+}

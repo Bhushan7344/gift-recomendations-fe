@@ -35,7 +35,7 @@ export default function UserDetailsModal({ isOpen, onClose}) {
       async function fetchPosts() {
         try {
           setLoading(true);
-          const response = await getUserById('65929f49-6e5b-4f9a-a059-b028d7feca92');        
+          const response = await getUserById('00f70814-88b5-417e-8c27-26f221313902');        
           setUserData(response.data);
         } catch (error) {
           console.error('Failed to fetch posts:', error);
@@ -56,7 +56,7 @@ export default function UserDetailsModal({ isOpen, onClose}) {
     console.log("Updated user data:", updatedUserData);
     try {
       setLoading(true);
-      const response = await updateUserPreferences('65929f49-6e5b-4f9a-a059-b028d7feca92', updatedUserData);        
+      const response = await updateUserPreferences('00f70814-88b5-417e-8c27-26f221313902', updatedUserData);        
       setUserData(response.data);
     } catch (error) {
       console.error('Failed to fetch posts:', error);

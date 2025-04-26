@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -35,27 +35,29 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import AddEditPersonModal from "@/components/custom/Modals/PersonModal";
 import DeletePersonModal from "@/components/custom/Modals/DeletePerson";
+import {
+  deleteRelationship,
+  getAllRelationships,
+} from "@/lib/api/relationship";
 
 export default function PeoplePage() {
   const [addEditPersonModalOpen, setAddEditPersonModalOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [editPerson, setEditPerson] = useState({});
+  const [deletePerson, setDeletePerson] = useState({});
+  const [people, setPeople] = useState([]);
 
   const handleSavePerson = (personData) => {
     console.log("Person saved:", personData);
     setAddEditPersonModalOpen(false);
   };
 
-  const handleEditClick = () => {
+  const handleEditClick = (person) => {
+    setEditPerson(person);
     setIsEditMode(true);
     setAddEditPersonModalOpen(true);
   };
@@ -65,134 +67,40 @@ export default function PeoplePage() {
     setAddEditPersonModalOpen(false);
   };
 
-  const handleDeletePerson = (personId) => {
-    console.log("Person deleted:", personId);
-    // In a real app, you would remove the person from your state or database
+  const handleDeletePerson = async (id) => {
+    try {
+      const response = await deleteRelationship(id);
+    } catch (error) {
+      console.error("Failed to delete user", error);
+    }
     setDeleteModalOpen(false);
   };
 
-  const [samplePerson, setSamplePerson] = useState({
-    id: 101,
-    name: "Sarah Johnson",
-    relationship: "Sister",
-    email: "sarah@example.com",
-    phone: "555-123-4567",
-    birthday: new Date("1992-11-15"),
-    anniversary: null,
-    notes: "Always appreciates thoughtful gifts.",
-    avatar: "/avatars/sarah.png",
-  });
+  const handleDeletePersonClick = (person) => {
+    setDeletePerson(person);
+    setDeleteModalOpen(true);
+  };
 
-  const [people, setPeople] = useState([
-    {
-      id: 1,
-      name: "Sarah Johnson",
-      relationship: "Sister",
-      birthday: "Nov 15",
-      lastGift: "Wireless Headphones",
-      avatar: "/avatars/sarah.png",
-    },
-    {
-      id: 2,
-      name: "Emma Davis",
-      relationship: "Partner",
-      birthday: "Nov 22",
-      lastGift: "Scented Candle Set",
-      avatar: "/avatars/emma.png",
-    },
-    {
-      id: 3,
-      name: "Robert Johnson",
-      relationship: "Father",
-      birthday: "Dec 1",
-      lastGift: "Leather Wallet",
-      avatar: "/avatars/dad.png",
-    },
-    {
-      id: 4,
-      name: "Mary Johnson",
-      relationship: "Mother",
-      birthday: "Jan 12",
-      lastGift: "Silk Scarf",
-      avatar: "/avatars/mom.png",
-    },
-    {
-      id: 5,
-      name: "James Wilson",
-      relationship: "Brother",
-      birthday: "Feb 28",
-      lastGift: "Video Game",
-      avatar: "/avatars/james.png",
-    },
-    {
-      id: 6,
-      name: "Patricia Brown",
-      relationship: "Aunt",
-      birthday: "Mar 17",
-      lastGift: "Cookbook",
-      avatar: "/avatars/patricia.png",
-    },
-    {
-      id: 7,
-      name: "Michael Smith",
-      relationship: "Friend",
-      birthday: "Apr 5",
-      lastGift: "Wine Bottle",
-      avatar: "/avatars/michael.png",
-    },
-    {
-      id: 8,
-      name: "Elizabeth Taylor",
-      relationship: "Colleague",
-      birthday: "May 22",
-      lastGift: "Office Plant",
-      avatar: "/avatars/elizabeth.png",
-    },
-    {
-      id: 9,
-      name: "David Miller",
-      relationship: "Cousin",
-      birthday: "Jun 10",
-      lastGift: "Bluetooth Speaker",
-      avatar: "/avatars/david.png",
-    },
-    {
-      id: 10,
-      name: "Jennifer White",
-      relationship: "Friend",
-      birthday: "Jul 7",
-      lastGift: "Yoga Mat",
-      avatar: "/avatars/jennifer.png",
-    },
-    {
-      id: 11,
-      name: "Thomas Brown",
-      relationship: "Uncle",
-      birthday: "Aug 15",
-      lastGift: "Grilling Set",
-      avatar: "/avatars/thomas.png",
-    },
-    {
-      id: 12,
-      name: "Susan Anderson",
-      relationship: "Neighbor",
-      birthday: "Sep 3",
-      lastGift: "Baked Goods",
-      avatar: "/avatars/susan.png",
-    },
-    {
-      id: 13,
-      name: "Charles Martin",
-      relationship: "Grandfather",
-      birthday: "Oct 30",
-      lastGift: "Photo Album",
-      avatar: "/avatars/charles.png",
-    },
-  ]);
+  async function fetchUsers() {
+    try {
+      setLoading(true);
+      const response = await getAllRelationships(
+        "00f70814-88b5-417e-8c27-26f221313902"
+      );
+      setPeople(response.data);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [relationshipFilter, setRelationshipFilter] = useState("");
 
   const peoplePerPage = 10;
 
@@ -200,15 +108,13 @@ export default function PeoplePage() {
   const filteredPeople = people.filter((person) => {
     const matchesSearch =
       person.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      person.relationship.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesRelationship =
-      relationshipFilter === "" || person.relationship === relationshipFilter;
-    return matchesSearch && matchesRelationship;
+      person.relationship_type.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesSearch;
   });
 
   // Get unique relationships for filter dropdown
   const uniqueRelationships = [
-    ...new Set(people.map((person) => person.relationship)),
+    ...new Set(people.map((person) => person.relationship_type)),
   ];
 
   // Calculate pagination
@@ -273,25 +179,6 @@ export default function PeoplePage() {
                   }}
                 />
               </div>
-              <Select
-                value={relationshipFilter}
-                onValueChange={(value) => {
-                  setRelationshipFilter(value);
-                  setCurrentPage(1); // Reset to first page on filter change
-                }}
-              >
-                <SelectTrigger className="w-full md:w-[180px]">
-                  <SelectValue placeholder="Filter by relationship" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="relations">All Relationships</SelectItem>
-                  {uniqueRelationships.map((relationship) => (
-                    <SelectItem key={relationship} value={relationship}>
-                      {relationship}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
 
             <div className="rounded-md border">
@@ -300,9 +187,10 @@ export default function PeoplePage() {
                   <TableRow>
                     <TableHead className="w-[50px]"></TableHead>
                     <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
                     <TableHead>Relationship</TableHead>
                     <TableHead>Birthday</TableHead>
-                    <TableHead>Last Gift</TableHead>
+                    <TableHead>Phone</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -324,11 +212,14 @@ export default function PeoplePage() {
                         <TableCell className="font-medium">
                           {person.name}
                         </TableCell>
+                        <TableCell>{person.email}</TableCell>
                         <TableCell>
-                          <Badge variant="outline">{person.relationship}</Badge>
+                          <Badge variant="outline">
+                            {person.relationship_type}
+                          </Badge>
                         </TableCell>
-                        <TableCell>{person.birthday}</TableCell>
-                        <TableCell>{person.lastGift}</TableCell>
+                        <TableCell>{person.birthdate}</TableCell>
+                        <TableCell>{person.phone_number}</TableCell>
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
                             <Button
@@ -351,7 +242,7 @@ export default function PeoplePage() {
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
                                 <DropdownMenuItem
-                                  onClick={handleEditClick}
+                                  onClick={() => handleEditClick(person)}
                                   className="cursor-pointer"
                                 >
                                   Edit Details
@@ -369,7 +260,7 @@ export default function PeoplePage() {
                               variant="outline"
                               className="h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50 cursor-pointer"
                               title="Delete"
-                              onClick={() => setDeleteModalOpen(true)}
+                              onClick={() => handleDeletePersonClick(person)}
                             >
                               <TrashIcon className="h-4 w-4" />
                             </Button>
@@ -458,13 +349,13 @@ export default function PeoplePage() {
         isOpen={addEditPersonModalOpen}
         onClose={handlePersonModalCLose}
         onSave={handleSavePerson}
-        person={isEditMode ? samplePerson : null}
+        person={isEditMode ? editPerson : null}
       />
       <DeletePersonModal
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onDelete={handleDeletePerson}
-        person={samplePerson}
+        person={deletePerson}
       />
     </div>
   );
