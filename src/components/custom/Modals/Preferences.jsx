@@ -34,19 +34,14 @@ export default function PersonPreferencesModal({
 }) {
   const [formData, setFormData] = useState({
     interests: [],
-    favoriteColors: [],
-    clothingSizes: {
-      shirt: "",
-      pants: "",
-      shoes: "",
-    },
-    giftCategories: [],
+    age: "",
+    gender: "",
+    favorite_categories: [],
     priceRange: {
       min: 20,
       max: 100,
     },
     dislikes: [],
-    wishlistItems: [],
     notes: "",
   });
 
@@ -71,7 +66,7 @@ export default function PersonPreferencesModal({
     "Collecting",
   ];
 
-  const giftCategories = [
+  const favorite_categories = [
     "Electronics",
     "Books",
     "Clothing",
@@ -87,58 +82,31 @@ export default function PersonPreferencesModal({
     "Personalized Items",
   ];
 
-  const colors = [
-    "Red",
-    "Blue",
-    "Green",
-    "Purple",
-    "Yellow",
-    "Pink",
-    "Black",
-    "White",
-    "Orange",
-    "Brown",
-    "Gray",
-    "Teal",
-  ];
-
-  // Initialize form with existing preferences if available
   useEffect(() => {
     if (preferences) {
       setFormData({
         interests: preferences.interests || [],
-        favoriteColors: preferences.favoriteColors || [],
-        clothingSizes: preferences.clothingSizes || {
-          shirt: "",
-          pants: "",
-          shoes: "",
-        },
-        giftCategories: preferences.giftCategories || [],
+        age: preferences.age,
+        gender: preferences.gender,
+        favorite_categories: preferences.favorite_categories || [],
         priceRange: preferences.priceRange || {
           min: 20,
           max: 100,
         },
         dislikes: preferences.dislikes || [],
-        wishlistItems: preferences.wishlistItems || [],
         notes: preferences.notes || "",
       });
     } else {
-      // Reset form for new preferences
       setFormData({
         interests: [],
-        favoriteColors: [],
-        clothingSizes: {
-          shirt: "",
-          pants: "",
-          shoes: "",
-        },
-        giftCategories: [],
+        age: "",
+        gender: "",
+        favorite_categories: [],
         priceRange: {
           min: 20,
           max: 100,
         },
         dislikes: [],
-        wishlistItems: [],
         notes: "",
       });
     }
@@ -179,30 +147,6 @@ export default function PersonPreferencesModal({
     });
   };
 
-  const addWishlistItem = () => {
-    const newItem = { id: Date.now(), name: "", url: "", price: "" };
-    setFormData((prev) => ({
-      ...prev,
-      wishlistItems: [...prev.wishlistItems, newItem],
-    }));
-  };
-
-  const updateWishlistItem = (id, field, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      wishlistItems: prev.wishlistItems.map((item) =>
-        item.id === id ? { ...item, [field]: value } : item
-      ),
-    }));
-  };
-
-  const removeWishlistItem = (id) => {
-    setFormData((prev) => ({
-      ...prev,
-      wishlistItems: prev.wishlistItems.filter((item) => item.id !== id),
-    }));
-  };
-
   const addDislike = (e) => {
     if (e.key === "Enter" && e.target.value.trim()) {
       handleArrayToggle("dislikes", e.target.value.trim());
@@ -217,9 +161,12 @@ export default function PersonPreferencesModal({
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const { priceRange, ...restFormData } = formData;
+    const formattedPriceRange = `${formData.priceRange.min}-${formData.priceRange.max} INR`;
     onSave({
-      personId: person.id,
-      ...formData,
+      relationship_id: person.id,
+      ...restFormData,
+      price_range: formattedPriceRange,
     });
   };
 
@@ -243,16 +190,15 @@ export default function PersonPreferencesModal({
           </DialogHeader>
 
           <Tabs defaultValue="interests" className="mt-6">
-            <TabsList className="grid grid-cols-4">
+            <TabsList className="grid grid-cols-2">
               <TabsTrigger value="interests">Interests</TabsTrigger>
               <TabsTrigger value="gifts">Gift Types</TabsTrigger>
-              <TabsTrigger value="sizes">Sizes</TabsTrigger>
-              <TabsTrigger value="wishlist">Wishlist</TabsTrigger>
             </TabsList>
 
             {/* Interests Tab */}
             <TabsContent value="interests" className="pt-4">
               <div className="space-y-6">
+                {/* Interests & Hobbies */}
                 <div>
                   <h3 className="text-lg font-medium mb-4">
                     Interests & Hobbies
@@ -285,28 +231,43 @@ export default function PersonPreferencesModal({
                   </div>
                 </div>
 
+                {/* Age Input */}
                 <div>
-                  <h3 className="text-lg font-medium mb-4">Favorite Colors</h3>
-                  <div className="grid grid-cols-4 gap-2">
-                    {colors.map((color) => (
-                      <div key={color} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`color-${color}`}
-                          checked={formData.favoriteColors.includes(color)}
-                          onCheckedChange={(checked) => {
-                            if (checked) {
-                              handleArrayToggle("favoriteColors", color);
-                            } else {
-                              handleArrayToggle("favoriteColors", color);
-                            }
-                          }}
-                        />
-                        <Label htmlFor={`color-${color}`}>{color}</Label>
-                      </div>
-                    ))}
-                  </div>
+                  <h3 className="text-lg font-medium mb-4">Age</h3>
+                  <Input
+                    type="number"
+                    placeholder="Enter age"
+                    value={formData.age}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        age: Number(e.target.value),
+                      }))
+                    }
+                  />
                 </div>
 
+                {/* Gender Input */}
+                <div>
+                  <h3 className="text-lg font-medium mb-4">Gender</h3>
+                  <Select
+                    value={formData.gender}
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({ ...prev, gender: value }))
+                    }
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select gender" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Male">Male</SelectItem>
+                      <SelectItem value="Female">Female</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Things They Dislike */}
                 <div>
                   <h3 className="text-lg font-medium mb-4">
                     Things They Dislike
@@ -352,19 +313,27 @@ export default function PersonPreferencesModal({
                     What types of gifts would {person?.name} appreciate?
                   </p>
                   <div className="grid grid-cols-3 gap-2">
-                    {giftCategories.map((category) => (
+                    {favorite_categories.map((category) => (
                       <div
                         key={category}
                         className="flex items-center space-x-2"
                       >
                         <Checkbox
                           id={`gift-${category}`}
-                          checked={formData.giftCategories.includes(category)}
+                          checked={formData.favorite_categories.includes(
+                            category
+                          )}
                           onCheckedChange={(checked) => {
                             if (checked) {
-                              handleArrayToggle("giftCategories", category);
+                              handleArrayToggle(
+                                "favorite_categories",
+                                category
+                              );
                             } else {
-                              handleArrayToggle("giftCategories", category);
+                              handleArrayToggle(
+                                "favorite_categories",
+                                category
+                              );
                             }
                           }}
                         />
@@ -395,7 +364,7 @@ export default function PersonPreferencesModal({
                       <div>
                         <Label htmlFor="minPrice">Min Price</Label>
                         <div className="flex items-center mt-1">
-                          <span className="text-gray-500 mr-1">$</span>
+                          <span className="text-gray-500 mr-1">INR</span>
                           <Input
                             id="minPrice"
                             type="number"
@@ -414,7 +383,7 @@ export default function PersonPreferencesModal({
                       <div>
                         <Label htmlFor="maxPrice">Max Price</Label>
                         <div className="flex items-center mt-1">
-                          <span className="text-gray-500 mr-1">$</span>
+                          <span className="text-gray-500 mr-1">INR</span>
                           <Input
                             id="maxPrice"
                             type="number"
@@ -442,206 +411,6 @@ export default function PersonPreferencesModal({
                     placeholder={`Any additional information about ${person?.name}'s gift preferences...`}
                     rows={3}
                   />
-                </div>
-              </div>
-            </TabsContent>
-
-            {/* Sizes Tab */}
-            <TabsContent value="sizes" className="pt-4">
-              <div className="space-y-6">
-                <div>
-                  <h3 className="text-lg font-medium mb-4">Clothing Sizes</h3>
-                  <p className="text-sm text-gray-500 mb-4">
-                    Add clothing sizes for {person?.name} (optional)
-                  </p>
-                  <div className="grid grid-cols-1 gap-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="shirtSize" className="text-right">
-                        Shirt Size
-                      </Label>
-                      <Select
-                        value={formData.clothingSizes.shirt}
-                        onValueChange={(value) =>
-                          handleNestedChange("clothingSizes", "shirt", value)
-                        }
-                      >
-                        <SelectTrigger id="shirtSize" className="col-span-3">
-                          <SelectValue placeholder="Select shirt size" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="NA">Not specified</SelectItem>
-                          <SelectItem value="XS">XS</SelectItem>
-                          <SelectItem value="S">S</SelectItem>
-                          <SelectItem value="M">M</SelectItem>
-                          <SelectItem value="L">L</SelectItem>
-                          <SelectItem value="XL">XL</SelectItem>
-                          <SelectItem value="XXL">XXL</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="pantsSize" className="text-right">
-                        Pants Size
-                      </Label>
-                      <Input
-                        id="pantsSize"
-                        value={formData.clothingSizes.pants}
-                        onChange={(e) =>
-                          handleNestedChange(
-                            "clothingSizes",
-                            "pants",
-                            e.target.value
-                          )
-                        }
-                        className="col-span-3"
-                        placeholder="e.g., 32x30, 10, Medium"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-4 items-center gap-4">
-                      <Label htmlFor="shoeSize" className="text-right">
-                        Shoe Size
-                      </Label>
-                      <Input
-                        id="shoeSize"
-                        value={formData.clothingSizes.shoes}
-                        onChange={(e) =>
-                          handleNestedChange(
-                            "clothingSizes",
-                            "shoes",
-                            e.target.value
-                          )
-                        }
-                        className="col-span-3"
-                        placeholder="e.g., 9, 42, 7.5"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </TabsContent>
-
-            {/* Wishlist Tab */}
-            <TabsContent value="wishlist" className="pt-4">
-              <div className="space-y-6">
-                <div>
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-medium">Wishlist Items</h3>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={addWishlistItem}
-                    >
-                      Add Item
-                    </Button>
-                  </div>
-                  <p className="text-sm text-gray-500 mb-4">
-                    Add specific items that {person?.name} has mentioned wanting
-                  </p>
-
-                  {formData.wishlistItems.length === 0 ? (
-                    <div className="text-center py-8 border border-dashed rounded-md">
-                      <p className="text-gray-500">
-                        No wishlist items added yet
-                      </p>
-                      <Button
-                        type="button"
-                        variant="link"
-                        onClick={addWishlistItem}
-                        className="mt-2"
-                      >
-                        Add your first item
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {formData.wishlistItems.map((item) => (
-                        <div
-                          key={item.id}
-                          className="border rounded-md p-4 space-y-3"
-                        >
-                          <div className="grid grid-cols-4 items-center gap-4">
-                            <Label
-                              htmlFor={`item-name-${item.id}`}
-                              className="text-right"
-                            >
-                              Item Name
-                            </Label>
-                            <Input
-                              id={`item-name-${item.id}`}
-                              value={item.name}
-                              onChange={(e) =>
-                                updateWishlistItem(
-                                  item.id,
-                                  "name",
-                                  e.target.value
-                                )
-                              }
-                              className="col-span-3"
-                              placeholder="e.g., Wireless Headphones"
-                            />
-                          </div>
-
-                          <div className="grid grid-cols-4 items-center gap-4">
-                            <Label
-                              htmlFor={`item-url-${item.id}`}
-                              className="text-right"
-                            >
-                              URL (optional)
-                            </Label>
-                            <Input
-                              id={`item-url-${item.id}`}
-                              value={item.url}
-                              onChange={(e) =>
-                                updateWishlistItem(
-                                  item.id,
-                                  "url",
-                                  e.target.value
-                                )
-                              }
-                              className="col-span-3"
-                              placeholder="Link to the product"
-                            />
-                          </div>
-
-                          <div className="grid grid-cols-4 items-center gap-4">
-                            <Label
-                              htmlFor={`item-price-${item.id}`}
-                              className="text-right"
-                            >
-                              Price (optional)
-                            </Label>
-                            <div className="col-span-2 flex items-center">
-                              <span className="text-gray-500 mr-1">$</span>
-                              <Input
-                                id={`item-price-${item.id}`}
-                                value={item.price}
-                                onChange={(e) =>
-                                  updateWishlistItem(
-                                    item.id,
-                                    "price",
-                                    e.target.value
-                                  )
-                                }
-                                placeholder="Approximate price"
-                              />
-                            </div>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeWishlistItem(item.id)}
-                              className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                            >
-                              Remove
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
                 </div>
               </div>
             </TabsContent>

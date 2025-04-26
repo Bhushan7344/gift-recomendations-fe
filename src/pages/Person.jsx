@@ -41,6 +41,8 @@ import {
   deleteRelationship,
   getAllRelationships,
 } from "@/lib/api/relationship";
+import PersonPreferencesModal from "@/components/custom/Modals/Preferences";
+import { getRelationshipPreferences } from "@/lib/api/relate-preferences";
 
 export default function PeoplePage() {
   const [addEditPersonModalOpen, setAddEditPersonModalOpen] = useState(false);
@@ -50,9 +52,10 @@ export default function PeoplePage() {
   const [editPerson, setEditPerson] = useState({});
   const [deletePerson, setDeletePerson] = useState({});
   const [people, setPeople] = useState([]);
+  const [editPreferencesOpen, setEditPreferencesOpen] = useState(false);
+  const [preferences, setPreferences] = useState({});
 
   const handleSavePerson = (personData) => {
-    console.log("Person saved:", personData);
     setAddEditPersonModalOpen(false);
   };
 
@@ -60,6 +63,15 @@ export default function PeoplePage() {
     setEditPerson(person);
     setIsEditMode(true);
     setAddEditPersonModalOpen(true);
+  };
+
+  const handleEditPreferencesClick = (person) => {
+    setEditPerson(person);
+    setEditPreferencesOpen(true);
+  };
+
+  const handleEditPreferences = (preferences) => {
+    setEditPreferencesOpen(false);
   };
 
   const handlePersonModalCLose = () => {
@@ -95,8 +107,20 @@ export default function PeoplePage() {
     }
   }
 
+  async function fetchUserPreferences() {
+    try {
+      const response = await getRelationshipPreferences(
+        "ff3fa1e5-a25d-413e-98f5-87249a7f6f3c"
+      );
+      setPreferences(response.data);
+    } catch (error) {
+      console.error("Failed to fetch user preferences:", error);
+    }
+  }
+
   useEffect(() => {
     fetchUsers();
+    fetchUserPreferences();
   }, []);
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -247,7 +271,12 @@ export default function PeoplePage() {
                                 >
                                   Edit Details
                                 </DropdownMenuItem>
-                                <DropdownMenuItem className="cursor-pointer">
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    handleEditPreferencesClick(person)
+                                  }
+                                  className="cursor-pointer"
+                                >
                                   Edit Preferences
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className="cursor-pointer">
@@ -356,6 +385,13 @@ export default function PeoplePage() {
         onClose={() => setDeleteModalOpen(false)}
         onDelete={handleDeletePerson}
         person={deletePerson}
+      />
+      <PersonPreferencesModal
+        isOpen={editPreferencesOpen}
+        onClose={() => setEditPreferencesOpen(false)}
+        onSave={handleEditPreferences}
+        person={editPerson}
+        preferences={preferences ? preferences : null}
       />
     </div>
   );

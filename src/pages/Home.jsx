@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Card,
   CardContent,
@@ -24,13 +24,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import AddEditPersonModal from "@/components/custom/Modals/PersonModal";
 import Link from "next/link";
-import { addPerson } from "@/lib/api/relationship";
+import { addPerson, getAllRelationships } from "@/lib/api/relationship";
 
 const HomePage = () => {
   const [addEditPersonModalOpen, setAddEditPersonModalOpen] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [personData, setPersonData] = useState({});
+  const [people, setPeople] = useState([]);
 
   const handleSavePerson = async (personData) => {
     console.log("Person saved:", personData);
@@ -48,6 +49,20 @@ const HomePage = () => {
       setAddEditPersonModalOpen(false);
     }
   };
+
+  async function fetchUsers() {
+    try {
+      const response = await getAllRelationships(
+        "00f70814-88b5-417e-8c27-26f221313902"
+      );
+      setPeople(response.data);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+    }
+  }
+  useEffect(() => {
+    fetchUsers();
+  }, []);
 
   const [upcomingEvents, setUpcomingEvents] = useState([
     {
@@ -73,22 +88,22 @@ const HomePage = () => {
     },
   ]);
 
-  const [recentRecipients, setRecentRecipients] = useState([
-    {
-      id: 1,
-      name: "Sarah",
-      relationship: "Sister",
-      avatar: "/avatars/sarah.png",
-    },
-    {
-      id: 2,
-      name: "Emma",
-      relationship: "Partner",
-      avatar: "/avatars/emma.png",
-    },
-    { id: 3, name: "Dad", relationship: "Father", avatar: "/avatars/dad.png" },
-    { id: 4, name: "Mom", relationship: "Mother", avatar: "/avatars/mom.png" },
-  ]);
+  // const [recentRecipients, setRecentRecipients] = useState([
+  //   {
+  //     id: 1,
+  //     name: "Sarah",
+  //     relationship: "Sister",
+  //     avatar: "/avatars/sarah.png",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Emma",
+  //     relationship: "Partner",
+  //     avatar: "/avatars/emma.png",
+  //   },
+  //   { id: 3, name: "Dad", relationship: "Father", avatar: "/avatars/dad.png" },
+  //   { id: 4, name: "Mom", relationship: "Mother", avatar: "/avatars/mom.png" },
+  // ]);
 
   const [recentGifts, setRecentGifts] = useState([
     {
@@ -241,7 +256,7 @@ const HomePage = () => {
             <CardContent>
               <ScrollArea className="h-full">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {recentRecipients.map((person) => (
+                  {people?.map((person) => (
                     <div
                       key={person.id}
                       className="flex flex-col items-center p-4 border rounded-lg hover:bg-gray-50 cursor-pointer"
@@ -255,13 +270,15 @@ const HomePage = () => {
                         {person.relationship}
                       </p>
                       <div className="mt-3 flex space-x-2">
+                      <Link href="start-gifting">
                         <Button
                           size="sm"
                           variant="outline"
-                          className="h-8 w-8 p-0"
+                          className="h-8 w-8 p-0 cursor-pointer"
                         >
                           <GiftIcon className="h-4 w-4" />
                         </Button>
+                        </Link>
                       </div>
                     </div>
                   ))}
